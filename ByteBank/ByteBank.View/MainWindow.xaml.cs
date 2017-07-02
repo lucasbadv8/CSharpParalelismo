@@ -71,20 +71,19 @@ namespace ByteBank.View
 
         private async Task<int> ConsolidarContas(IEnumerable<ContaCliente> contas, IProgress<string> reportProgressUser, CancellationToken ct)
         {
-            var total = 0;
+            var totalProcessado = 0;
             var tasks = contas.Select(conta =>
                 Task.Factory.StartNew(() =>
                 {
                     ct.ThrowIfCancellationRequested();
-
                     var resultadoConsolidacao = r_Servico.ConsolidarMovimentacao(conta,ct);
                     ct.ThrowIfCancellationRequested();
                     reportProgressUser.Report(resultadoConsolidacao);
-                    total++;
+                    totalProcessado++;
                 },ct));
 
             await Task.WhenAll(tasks);
-            return total;
+            return totalProcessado;
         }
 
         private void LimparView()
